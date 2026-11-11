@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Clássica Daily - Tu Mentor de Música Clásica</title>
+    
+    <!-- PWA Setup para iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Clássica Daily">
+    <link rel="apple-touch-icon" href="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=180&h=180&fit=crop">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0d0e12;
+            color: #e2e8f0;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .font-serif-title {
+            font-family: 'Cinzel', serif;
+        }
+
+        .gold-gradient {
+            background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-bg {
+            background: linear-gradient(135deg, #bf953f 0%, #b38728 50%, #aa771c 100%);
+        }
+
+        .glass-panel {
+            background: rgba(22, 25, 35, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(13, 14, 18, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(191, 149, 63, 0.3);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between pb-20 md:pb-0">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-yellow-900/20 px-4 py-3">
+        <div class="max-w-xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-full gold-bg flex items-center justify-center text-slate-950 font-serif-title font-bold text-lg shadow-lg shadow-amber-900/20">
+                    C
+                </div>
+                <div>
+                    <h1 class="font-serif-title text-lg font-bold tracking-wider gold-gradient">CLÁSSICA</h1>
+                    <p class="text-[10px] tracking-widest text-slate-400 uppercase">Mentor Cronológico</p>
+                </div>
+            </div>
+            
+            <button id="installBtn" onclick="openInstallModal()" class="flex items-center space-x-1 text-xs bg-amber-950/40 text-amber-300 border border-amber-600/30 px-2.5 py-1.5 rounded-full hover:bg-amber-900/40 transition">
+                <i data-lucide="share" class="w-3.5 h-3.5"></i>
+                <span>Instalar App</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-xl mx-auto w-full px-4 py-6 flex-1">
+        
+        <!-- Tab 1: Recomendación Diaria -->
+        <section id="tab-daily" class="space-y-6">
+            
+            <!-- Mentor Header Banner -->
+            <div class="glass-panel rounded-2xl p-4 border border-amber-500/20 flex items-start space-x-4">
+                <div class="w-12 h-12 rounded-full gold-bg flex-shrink-0 flex items-center justify-center shadow-lg">
+                    <i data-lucide="sparkles" class="w-6 h-6 text-slate-950"></i>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-amber-400">Chronos</span>
+                        <span class="text-[10px] text-slate-500">• Tu Mentor Virtual</span>
+                    </div>
+                    <p id="mentorGreeting" class="text-xs text-slate-300 mt-1 leading-relaxed">
+                        "¡Bienvenido! Viajemos a través del tiempo explorando la evolución de la música académica desde 1600 hasta 1940."
+                    </p>
+                </div>
+            </div>
+
+            <!-- Piece Card -->
+            <div class="glass-panel rounded-3xl overflow-hidden border border-amber-950/30 relative shadow-2xl">
+                <!-- Cover Image -->
+                <div class="h-48 w-full relative overflow-hidden">
+                    <img id="pieceImg" src="" alt="Portada" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0d0e12] via-[#0d0e12]/40 to-transparent"></div>
+                    
+                    <!-- Badges -->
+                    <div class="absolute top-4 left-4 flex space-x-2">
+                        <span id="pieceYear" class="bg-amber-500/90 text-slate-950 text-xs font-bold px-2.5 py-1 rounded-full backdrop-blur-md">
+                            1607
+                        </span>
+                        <span id="pieceEra" class="bg-slate-900/80 text-amber-300 border border-amber-500/30 text-xs font-medium px-2.5 py-1 rounded-full backdrop-blur-md">
+                            Barroco
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Info Body -->
+                <div class="p-6 space-y-4">
+                    <div>
+                        <span id="pieceComposer" class="text-xs font-bold tracking-widest text-amber-400 uppercase">Claudio Monteverdi</span>
+                        <h2 id="pieceTitle" class="font-serif-title text-2xl font-bold text-slate-100 mt-1">L'Orfeo: Toccata</h2>
+                    </div>
+
+                    <div class="bg-slate-900/60 rounded-xl p-3 border border-slate-800 text-xs text-slate-300 space-y-1">
+                        <div class="flex items-center text-amber-400/90 font-medium space-x-1.5 mb-1">
+                            <i data-lucide="headphones" class="w-4 h-4"></i>
+                            <span>En qué fijarte hoy:</span>
+                        </div>
+                        <p id="pieceListeningGuide" class="leading-relaxed text-slate-400">
+                            Presta atención a las fanfarrias de metales. Esta toccata marcaba la entrada del Duque de Mantua antes de comenzar la ópera.
+                        </p>
+                    </div>
+
+                    <!-- Media Buttons -->
+                    <div class="pt-2 flex items-center space-x-3">
+                        <a id="youtubeBtn" href="#" target="_blank" class="flex-1 gold-bg text-slate-950 font-semibold py-3 px-4 rounded-xl flex items-center justify-center space-x-2 text-sm shadow-lg hover:opacity-95 transition">
+                            <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+                            <span>Escuchar en YouTube</span>
+                        </a>
+                        <a id="spotifyBtn" href="#" target="_blank" class="p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 rounded-xl transition" title="Buscar en Spotify">
+                            <i data-lucide="disc" class="w-5 h-5"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Survey Section -->
+            <div id="surveyBox" class="glass-panel rounded-2xl p-5 border border-slate-800 space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <h3 class="font-serif-title font-bold text-slate-200 text-sm">Encuesta Diaria de Escucha</h3>
+                    <span class="text-[11px] text-amber-400/80 bg-amber-950/40 px-2 py-0.5 rounded-full border border-amber-600/20">3 preguntas</span>
+                </div>
+
+                <form id="dailySurveyForm" class="space-y-4" onsubmit="handleSurveySubmit(event)">
+                    <!-- Question 1: Valoración global -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-2">1. ¿Qué puntuación le das a esta pieza?</label>
+                        <div class="flex justify-between items-center space-x-2">
+                            <div id="starContainer" class="flex space-x-1 w-full"></div>
+                        </div>
+                    </div>
+
+                    <!-- Question 2: Emoción transmitida -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-2">2. ¿Qué atmósfera/emoción predominó para ti?</label>
+                        <select id="emotionSelect" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500/50">
+                            <option value="Solemne / Majestuosa">Solemne / Majestuosa</option>
+                            <option value="Melancólica / Íntima">Melancólica / Íntima</option>
+                            <option value="Enérgica / Virtuosa">Enérgica / Virtuosa</option>
+                            <option value="Compleja / Intelectual">Compleja / Intelectual</option>
+                            <option value="Relajante / Armónica">Relajante / Armónica</option>
+                            <option value="Evocadora / Evocativa">Evocadora / Atmosférica</option>
+                        </select>
+                    </div>
+
+                    <!-- Question 3: Complejidad percibida -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-2">3. ¿Cómo sentiste la estructura de la obra?</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button type="button" onclick="selectComplexity(this, 'Accesible')" class="complexity-btn py-2 text-[11px] bg-slate-900 border border-slate-800 rounded-xl text-slate-300 hover:border-amber-500/40 transition">Accesible</button>
+                            <button type="button" onclick="selectComplexity(this, 'Equilibrada')" class="complexity-btn py-2 text-[11px] bg-slate-900 border border-slate-800 rounded-xl text-slate-300 hover:border-amber-500/40 transition border-amber-500/50 text-amber-400 font-medium">Equilibrada</button>
+                            <button type="button" onclick="selectComplexity(this, 'Densa')" class="complexity-btn py-2 text-[11px] bg-slate-900 border border-slate-800 rounded-xl text-slate-300 hover:border-amber-500/40 transition">Densa</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-slate-950 font-bold rounded-xl text-xs uppercase tracking-wider shadow-lg transition">
+                        Guardar Valoración y Avanzar Día
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Tab 2: Línea Temporal & Biblioteca -->
+        <section id="tab-timeline" class="space-y-6 hidden">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div>
+                    <h2 class="font-serif-title font-bold text-xl text-slate-100">Biblioteca Histórica</h2>
+                    <p class="text-xs text-slate-400">Tus obras registradas en orden de creación (1600 - 1940)</p>
+                </div>
+                <div class="text-right">
+                    <span id="savedCount" class="text-xs font-bold text-amber-400">0</span>
+                    <span class="text-[10px] text-slate-500 block">obras guardadas</span>
+                </div>
+            </div>
+
+            <!-- Filter Pills -->
+            <div class="flex space-x-2 overflow-x-auto pb-2 text-xs">
+                <button onclick="filterTimeline('all')" class="px-3 py-1.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 whitespace-nowrap">Todas</button>
+                <button onclick="filterTimeline('Barroco')" class="px-3 py-1.5 rounded-full bg-slate-900 text-slate-400 border border-slate-800 whitespace-nowrap hover:text-slate-200">Barroco</button>
+                <button onclick="filterTimeline('Clasicismo')" class="px-3 py-1.5 rounded-full bg-slate-900 text-slate-400 border border-slate-800 whitespace-nowrap hover:text-slate-200">Clasicismo</button>
+                <button onclick="filterTimeline('Romanticismo')" class="px-3 py-1.5 rounded-full bg-slate-900 text-slate-400 border border-slate-800 whitespace-nowrap hover:text-slate-200">Romanticismo</button>
+                <button onclick="filterTimeline('Impresionismo')" class="px-3 py-1.5 rounded-full bg-slate-900 text-slate-400 border border-slate-800 whitespace-nowrap hover:text-slate-200">Impresionismo</button>
+                <button onclick="filterTimeline('Siglo XX')" class="px-3 py-1.5 rounded-full bg-slate-900 text-slate-400 border border-slate-800 whitespace-nowrap hover:text-slate-200">Siglo XX</button>
+            </div>
+
+            <!-- Timeline Vertical -->
+            <div id="timelineContainer" class="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-gradient-to-b before:from-amber-500/80 before:via-amber-700/40 before:to-slate-800">
+            </div>
+        </section>
+
+        <!-- Tab 3: Perfil & Estadísticas -->
+        <section id="tab-profile" class="space-y-6 hidden">
+            <div class="border-b border-slate-800 pb-3">
+                <h2 class="font-serif-title font-bold text-xl text-slate-100">Mapa de Aprendizaje</h2>
+                <p class="text-xs text-slate-400">Análisis de tus preferencias musicales</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="glass-panel p-4 rounded-2xl border border-slate-800">
+                    <span class="text-[10px] uppercase font-bold tracking-wider text-slate-500">Progreso Temporal</span>
+                    <div id="yearProgressText" class="text-xl font-bold font-serif-title text-amber-400 mt-1">1607</div>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Año actual en la historia</p>
+                </div>
+                <div class="glass-panel p-4 rounded-2xl border border-slate-800">
+                    <span class="text-[10px] uppercase font-bold tracking-wider text-slate-500">Valoración Media</span>
+                    <div id="avgRatingText" class="text-xl font-bold font-serif-title text-amber-400 mt-1">0.0 ★</div>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Nivel de afinidad general</p>
+                </div>
+            </div>
+
+            <!-- Mentor Synthesis Card -->
+            <div class="glass-panel p-5 rounded-2xl border border-amber-900/30 space-y-3">
+                <div class="flex items-center space-x-2 text-amber-400">
+                    <i data-lucide="brain" class="w-4 h-4"></i>
+                    <h3 class="font-serif-title text-sm font-bold">Perfil Musical según Chronos</h3>
+                </div>
+                <p id="profileSynthesis" class="text-xs text-slate-300 leading-relaxed">
+                    Aún estamos recopilando tus primeros datos. A medida que respondas las encuestas, aquí se sintetizarán los instrumentos y épocas que más despiertan tu interés.
+                </p>
+            </div>
+
+            <!-- Danger Zone / Reset -->
+            <div class="pt-4 border-t border-slate-900">
+                <button onclick="resetApp()" class="w-full py-2.5 bg-red-950/30 border border-red-900/30 text-red-400 rounded-xl text-xs font-semibold hover:bg-red-900/40 transition">
+                    Reiniciar Progreso
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 glass-panel border-t border-slate-800/80 px-6 py-2">
+        <div class="max-w-xl mx-auto flex justify-around items-center">
+            <button onclick="switchTab('daily')" id="nav-daily" class="flex flex-col items-center space-y-1 text-amber-400">
+                <i data-lucide="disc" class="w-5 h-5"></i>
+                <span class="text-[10px] font-medium tracking-wide">Hoy</span>
+            </button>
+            <button onclick="switchTab('timeline')" id="nav-timeline" class="flex flex-col items-center space-y-1 text-slate-500 hover:text-slate-300">
+                <i data-lucide="git-commit" class="w-5 h-5"></i>
+                <span class="text-[10px] font-medium tracking-wide">Línea Temporal</span>
+            </button>
+            <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center space-y-1 text-slate-500 hover:text-slate-300">
+                <i data-lucide="compass" class="w-5 h-5"></i>
+                <span class="text-[10px] font-medium tracking-wide">Progreso</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- iOS Install Modal -->
+    <div id="installModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end md:items-center justify-center p-4 hidden">
+        <div class="glass-panel w-full max-w-md rounded-3xl p-6 space-y-5 border border-amber-500/30 shadow-2xl">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="font-serif-title font-bold text-lg gold-gradient">Instalar en tu iPhone</h3>
+                    <p class="text-xs text-slate-400">Disfruta de Clássica Daily como app nativa</p>
+                </div>
+                <button onclick="closeInstallModal()" class="text-slate-400 hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <ol class="space-y-4 text-xs text-slate-300">
+                <li class="flex items-start space-x-3">
+                    <span class="w-6 h-6 rounded-full gold-bg text-slate-950 font-bold flex items-center justify-center text-xs flex-shrink-0">1</span>
+                    <p>Abre esta página en el navegador <strong class="text-amber-300">Safari</strong> de tu iPhone.</p>
+                </li>
+                <li class="flex items-start space-x-3">
+                    <span class="w-6 h-6 rounded-full gold-bg text-slate-950 font-bold flex items-center justify-center text-xs flex-shrink-0">2</span>
+                    <p>Toca el botón <strong class="text-amber-300">Compartir</strong> (<i data-lucide="share" class="w-3.5 h-3.5 inline"></i>) en la barra inferior de Safari.</p>
+                </li>
+                <li class="flex items-start space-x-3">
+                    <span class="w-6 h-6 rounded-full gold-bg text-slate-950 font-bold flex items-center justify-center text-xs flex-shrink-0">3</span>
+                    <p>Selecciona la opción <strong class="text-amber-300">"Añadir a la pantalla de inicio"</strong>.</p>
+                </li>
+            </ol>
+
+            <button onclick="closeInstallModal()" class="w-full py-3 bg-slate-800 text-slate-200 font-semibold rounded-xl text-xs hover:bg-slate-700 transition">
+                Entendido
+            </button>
+        </div>
+    </div>
+
+    <!-- Application Logic Script -->
+    <script>
+        // Database Completa Ampliada (1600 - 1940)
+        const classicalDatabase = [
+            {
+                id: 1,
+                year: 1607,
+                composer: "Claudio Monteverdi",
+                title: "L'Orfeo: Toccata",
+                era: "Barroco",
+                img: "https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=600&fit=crop",
+                guide: "Escucha la brillante fanfarria de metales que inaugura una de las primeras óperas de la historia de la música.",
+                yt: "https://www.youtube.com/results?search_query=Monteverdi+L+Orfeo+Toccata",
+                sp: "https://open.spotify.com/search/Monteverdi%20L'Orfeo%20Toccata"
+            },
+            {
+                id: 2,
+                year: 1623,
+                composer: "Girolamo Frescobaldi",
+                title: "Toccata Prima (Primo Libro)",
+                era: "Barroco",
+                img: "https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=600&fit=crop",
+                guide: "Fíjate en la libertad del ritmo en el clavecín; Frescobaldi recomendaba no tocar a compás estricto sino con afetto.",
+                yt: "https://www.youtube.com/results?search_query=Frescobaldi+Toccata+Prima",
+                sp: "https://open.spotify.com/search/Frescobaldi%20Toccata%20Prima"
+            },
+            {
+                id: 3,
+                year: 1689,
+                composer: "Henry Purcell",
+                title: "Dido y Eneas: El lamento de Dido",
+                era: "Barroco",
+                img: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&fit=crop",
+                guide: "Observa la línea del bajo descendente (ground bass) que se repite continuamente expresando la inevitable tragedia.",
+                yt: "https://www.youtube.com/results?search_query=Purcell+Dido+and+Aeneas+When+I+am+laid+in+earth",
+                sp: "https://open.spotify.com/search/Purcell%20Dido%20When%20I%20am%20laid"
+            },
+            {
+                id: 4,
+                year: 1723,
+                composer: "Antonio Vivaldi",
+                title: "Las Cuatro Estaciones: Primavera (Allegro)",
+                era: "Barroco",
+                img: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&fit=crop",
+                guide: "Música descriptiva pura: intenta identificar los trinos de los violines imitando el canto de las aves primaverales.",
+                yt: "https://www.youtube.com/results?search_query=Vivaldi+Four+Seasons+Spring+Allegro",
+                sp: "https://open.spotify.com/search/Vivaldi%20Spring%20Allegro"
+            },
+            {
+                id: 5,
+                year: 1727,
+                composer: "Johann Sebastian Bach",
+                title: "Pasión según San Mateo: Erbarme dich",
+                era: "Barroco",
+                img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&fit=crop",
+                guide: "El solo de violín dialoga con la voz del alto expresando una de las arias más conmovedoras del contrapunto barroco.",
+                yt: "https://www.youtube.com/results?search_query=Bach+Erbarme+dich+St+Matthew+Passion",
+                sp: "https://open.spotify.com/search/Bach%20Erbarme%20dich"
+            },
+            {
+                id: 6,
+                year: 1730,
+                composer: "Giovanni Battista Pergolesi",
+                title: "Stabat Mater: Stabat Mater dolorosa",
+                era: "Barroco",
+                img: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&fit=crop",
+                guide: "Escucha los choques disonantes (suspensiones) entre las dos voces femeninas expresando el dolor con absoluta elegancia.",
+                yt: "https://www.youtube.com/results?search_query=Pergolesi+Stabat+Mater+dolorosa",
+                sp: "https://open.spotify.com/search/Pergolesi%20Stabat%20Mater"
+            },
+            {
+                id: 7,
+                year: 1741,
+                composer: "Georg Friedrich Händel",
+                title: "El Mesías: Aleluya",
+                era: "Barroco",
+                img: "https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=600&fit=crop",
+                guide: "Fíjate en la alternancia magistral entre bloques de coro rotundos y pasajes contrapuntísticos imitativos.",
+                yt: "https://www.youtube.com/results?search_query=Handel+Messiah+Hallelujah",
+                sp: "https://open.spotify.com/search/Handel%20Messiah%20Hallelujah"
+            },
+            {
+                id: 8,
+                year: 1762,
+                composer: "Christoph Willibald Gluck",
+                title: "Orfeo y Eurídice: Che farò senza Euridice",
+                era: "Clasicismo",
+                img: "https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=600&fit=crop",
+                guide: "Ejemplo de la reforma clásica de la ópera: melodía noble y despojada de adornos excesivos para centrarse en la emoción límpida.",
+                yt: "https://www.youtube.com/results?search_query=Gluck+Orfeo+Che+faro+senza+Euridice",
+                sp: "https://open.spotify.com/search/Gluck%20Che%20faro%20senza%20Euridice"
+            },
+            {
+                id: 9,
+                year: 1787,
+                composer: "Wolfgang Amadeus Mozart",
+                title: "Eine kleine Nachtmusik (K. 525)",
+                era: "Clasicismo",
+                img: "https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=600&fit=crop",
+                guide: "Elegancia y claridad clásica. Fíjate en la simetría perfecta de las frases musicales y el equilibrio entre las cuerdas.",
+                yt: "https://www.youtube.com/results?search_query=Mozart+Eine+kleine+Nachtmusik",
+                sp: "https://open.spotify.com/search/Mozart%20Eine%20kleine%20Nachtmusik"
+            },
+            {
+                id: 10,
+                year: 1798,
+                composer: "Joseph Haydn",
+                title: "La Creación: La representación del Caos",
+                era: "Clasicismo",
+                img: "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=600&fit=crop",
+                guide: "Escucha la ambigüedad armónica inicial que retrata la masa informe del universo antes del primer rayo de luz.",
+                yt: "https://www.youtube.com/results?search_query=Haydn+Creation+Representation+of+Chaos",
+                sp: "https://open.spotify.com/search/Haydn%20Creation%20Chaos"
+            },
+            {
+                id: 11,
+                year: 1808,
+                composer: "Ludwig van Beethoven",
+                title: "Sinfonía No. 5 en Do menor: I. Allegro con brio",
+                era: "Romanticismo",
+                img: "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=600&fit=crop",
+                guide: "El famoso motivo de cuatro notas ('el destino llamando a la puerta') articula de forma implacable todo el movimiento.",
+                yt: "https://www.youtube.com/results?search_query=Beethoven+Symphony+5+Allegro+con+brio",
+                sp: "https://open.spotify.com/search/Beethoven%20Symphony%205"
+            },
+            {
+                id: 12,
+                year: 1826,
+                composer: "Felix Mendelssohn",
+                title: "El sueño de una noche de verano: Obertura Op. 21",
+                era: "Romanticismo",
+                img: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&fit=crop",
+                guide: "Atento al staccato veloz en las cuerdas imitando el revoloteo fantástico de los duendes en el bosque encantado.",
+                yt: "https://www.youtube.com/results?search_query=Mendelssohn+Midsummer+Night+Dream+Overture",
+                sp: "https://open.spotify.com/search/Mendelssohn%20Midsummer%20Overture"
+            },
+            {
+                id: 13,
+                year: 1844,
+                composer: "Frédéric Chopin",
+                title: "Balada No. 4 en Fa menor, Op. 52",
+                era: "Romanticismo",
+                img: "https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=600&fit=crop",
+                guide: "Cúspide de la literatura pianística. Escucha el desarrollo poético y la compleja textura contrapuntística antes de la coda.",
+                yt: "https://www.youtube.com/results?search_query=Chopin+Ballade+No+4",
+                sp: "https://open.spotify.com/search/Chopin%20Ballade%204"
+            },
+            {
+                id: 14,
+                year: 1876,
+                composer: "Johannes Brahms",
+                title: "Sinfonía No. 1 en Do menor: IV. Adagio - Allegro non troppo",
+                era: "Romanticismo",
+                img: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=600&fit=crop",
+                guide: "Presta atención a la llamada del trompa alpino sobre las cuerdas en trémolo y al tema noble de tintes beethovenianos.",
+                yt: "https://www.youtube.com/results?search_query=Brahms+Symphony+1+Finale",
+                sp: "https://open.spotify.com/search/Brahms%20Symphony%201%20Finale"
+            },
+            {
+                id: 15,
+                year: 1888,
+                composer: "Pyotr Ilyich Tchaikovsky",
+                title: "Sinfonía No. 5 en Mi menor, Op. 64: II. Andante cantabile",
+                era: "Romanticismo",
+                img: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&fit=crop",
+                guide: "El solo de trompa sobre el acompañamiento de cuerdas es uno de los pasajes más apasionados e inspirados del Romanticismo tardío.",
+                yt: "https://www.youtube.com/results?search_query=Tchaikovsky+Symphony+5+Andante+cantabile",
+                sp: "https://open.spotify.com/search/Tchaikovsky%20Symphony%205%20Andante"
+            },
+            {
+                id: 16,
+                year: 1894,
+                composer: "Claude Debussy",
+                title: "Preludio a la siesta de un fauno",
+                era: "Impresionismo",
+                img: "https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=600&fit=crop",
+                guide: "La flauta sola abre el horizonte moderno con un diseño ondulante y sensual que disuelve los contornos armónicos tradicionales.",
+                yt: "https://www.youtube.com/results?search_query=Debussy+Prelude+a+l+apres+midi+d+un+faune",
+                sp: "https://open.spotify.com/search/Debussy%20Prelude%20faune"
+            },
+            {
+                id: 17,
+                year: 1901,
+                composer: "Gustav Mahler",
+                title: "Sinfonía No. 5: IV. Adagietto",
+                era: "Romanticismo",
+                img: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=600&fit=crop",
+                guide: "Escrito solo para cuerdas y arpa como carta de amor a Alma Mahler; una meditación sobre la nostalgia y la belleza trascendente.",
+                yt: "https://www.youtube.com/results?search_query=Mahler+Symphony+5+Adagietto",
+                sp: "https://open.spotify.com/search/Mahler%20Symphony%205%20Adagietto"
+            },
+            {
+                id: 18,
+                year: 1905,
+                composer: "Maurice Ravel",
+                title: "Miroirs: Une barque sur l'océan",
+                era: "Impresionismo",
+                img: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&fit=crop",
+                guide: "Los arpegios incesantes en el piano recrean el vaivén del agua y el reflejo de la luz del sol en el mar abierto.",
+                yt: "https://www.youtube.com/results?search_query=Ravel+Une+barque+sur+l+ocean",
+                sp: "https://open.spotify.com/search/Ravel%20Une%20barque%20sur%20ocean"
+            },
+            {
+                id: 19,
+                year: 1913,
+                composer: "Igor Stravinsky",
+                title: "La consagración de la primavera: Augurios primaverales",
+                era: "Siglo XX",
+                img: "https://images.unsplash.com/photo-1469488865564-c2de10f69f96?w=600&fit=crop",
+                guide: "Siente los acentos rítmicos impredecibles y disonantes en las cuerdas que revolucionaron el lenguaje musical moderno.",
+                yt: "https://www.youtube.com/results?search_query=Stravinsky+Rite+of+Spring+Augurs",
+                sp: "https://open.spotify.com/search/Stravinsky%20Rite%20of%20Spring"
+            },
+            {
+                id: 20,
+                year: 1936,
+                composer: "Samuel Barber",
+                title: "Adagio para cuerdas, Op. 11",
+                era: "Siglo XX",
+                img: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=600&fit=crop",
+                guide: "Sigue la escala melódica continua que asciende paso a paso hasta alcanzar un desgarrador clímax de gran expresividad.",
+                yt: "https://www.youtube.com/results?search_query=Barber+Adagio+for+Strings",
+                sp: "https://open.spotify.com/search/Barber%20Adagio%20for%20Strings"
+            }
+        ];
+
+        // App State Manager
+        let appState = {
+            currentIndex: 0,
+            ratings: [],
+            selectedRating: 3,
+            selectedComplexity: 'Equilibrada'
+        };
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            renderStarButtons();
+            updateDailyView();
+            renderTimeline();
+            updateProfileView();
+            lucide.createIcons();
+        });
+
+        function loadState() {
+            const saved = localStorage.getItem('classica_daily_state');
+            if (saved) {
+                appState = JSON.parse(saved);
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('classica_daily_state', JSON.stringify(appState));
+        }
+
+        function renderStarButtons() {
+            const container = document.getElementById('starContainer');
+            container.innerHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `star-btn flex-1 py-2 rounded-xl text-xs font-bold transition border ${
+                    i === appState.selectedRating 
+                    ? 'gold-bg text-slate-950 border-amber-400' 
+                    : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-amber-500/40'
+                }`;
+                btn.innerText = `${i}★`;
+                btn.onclick = () => {
+                    appState.selectedRating = i;
+                    renderStarButtons();
+                };
+                container.appendChild(btn);
+            }
+        }
+
+        function selectComplexity(btn, complexity) {
+            appState.selectedComplexity = complexity;
+            document.querySelectorAll('.complexity-btn').forEach(b => {
+                b.classList.remove('border-amber-500/50', 'text-amber-400', 'font-medium');
+                b.classList.add('text-slate-300');
+            });
+            btn.classList.add('border-amber-500/50', 'text-amber-400', 'font-medium');
+        }
+
+        function updateDailyView() {
+            const piece = classicalDatabase[appState.currentIndex % classicalDatabase.length];
+            
+            document.getElementById('pieceYear').innerText = piece.year;
+            document.getElementById('pieceEra').innerText = piece.era;
+            document.getElementById('pieceComposer').innerText = piece.composer;
+            document.getElementById('pieceTitle').innerText = piece.title;
+            document.getElementById('pieceImg').src = piece.img;
+            document.getElementById('pieceListeningGuide').innerText = piece.guide;
+            
+            document.getElementById('youtubeBtn').href = piece.yt;
+            document.getElementById('spotifyBtn').href = piece.sp;
+        }
+
+        function handleSurveySubmit(e) {
+            e.preventDefault();
+            const piece = classicalDatabase[appState.currentIndex % classicalDatabase.length];
+            const emotion = document.getElementById('emotionSelect').value;
+
+            appState.ratings.push({
+                pieceId: piece.id,
+                year: piece.year,
+                composer: piece.composer,
+                title: piece.title,
+                era: piece.era,
+                rating: appState.selectedRating,
+                emotion: emotion,
+                complexity: appState.selectedComplexity,
+                date: new Date().toLocaleDateString('es-ES')
+            });
+
+            appState.currentIndex += 1;
+            saveState();
+
+            updateDailyView();
+            renderTimeline();
+            updateProfileView();
+
+            alert("¡Valoración guardada! Hemos avanzado al siguiente día cronológico.");
+        }
+
+        function renderTimeline(filterEra = 'all') {
+            const container = document.getElementById('timelineContainer');
+            container.innerHTML = '';
+
+            const itemsToRender = appState.ratings.filter(item => filterEra === 'all' || item.era === filterEra);
+
+            document.getElementById('savedCount').innerText = appState.ratings.length;
+
+            if (itemsToRender.length === 0) {
+                container.innerHTML = `
+                    <div class="text-xs text-slate-500 py-4 italic">
+                        No hay obras registradas en esta categoría aún. Completa la encuesta diaria para añadirlas.
+                    </div>
+                `;
+                return;
+            }
+
+            itemsToRender.forEach(item => {
+                const el = document.createElement('div');
+                el.className = 'relative group';
+                el.innerHTML = `
+                    <div class="absolute -left-[31px] top-1.5 w-3 h-3 rounded-full border-2 border-amber-500 bg-slate-950"></div>
+                    <div class="glass-panel p-3.5 rounded-xl border border-slate-800 space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-amber-400">${item.year} • ${item.era}</span>
+                            <span class="text-xs text-amber-300 font-semibold">${'★'.repeat(item.rating)}</span>
+                        </div>
+                        <h4 class="font-serif-title text-sm font-bold text-slate-200">${item.title}</h4>
+                        <p class="text-xs text-slate-400">${item.composer}</p>
+                        <div class="pt-2 flex items-center space-x-2 text-[10px] text-slate-500">
+                            <span class="bg-slate-900 border border-slate-800 px-2 py-0.5 rounded-md">${item.emotion}</span>
+                            <span class="bg-slate-900 border border-slate-800 px-2 py-0.5 rounded-md">${item.complexity}</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        function filterTimeline(era) {
+            renderTimeline(era);
+        }
+
+        function updateProfileView() {
+            const currentPiece = classicalDatabase[appState.currentIndex % classicalDatabase.length];
+            document.getElementById('yearProgressText').innerText = currentPiece.year;
+
+            if (appState.ratings.length > 0) {
+                const avg = (appState.ratings.reduce((acc, curr) => acc + curr.rating, 0) / appState.ratings.length).toFixed(1);
+                document.getElementById('avgRatingText').innerText = `${avg} ★`;
+
+                const topEra = appState.ratings[appState.ratings.length - 1].era;
+                document.getElementById('profileSynthesis').innerText = 
+                    `Has explorado un total de ${appState.ratings.length} obras históricas. Tu registro reciente muestra preferencia por el período ${topEra}. Continuaremos graduando la complejidad de las piezas conforme avanzamos cronológicamente.`;
+            }
+        }
+
+        function switchTab(tabName) {
+            document.getElementById('tab-daily').classList.add('hidden');
+            document.getElementById('tab-timeline').classList.add('hidden');
+            document.getElementById('tab-profile').classList.add('hidden');
+
+            document.getElementById('nav-daily').className = "flex flex-col items-center space-y-1 text-slate-500 hover:text-slate-300";
+            document.getElementById('nav-timeline').className = "flex flex-col items-center space-y-1 text-slate-500 hover:text-slate-300";
+            document.getElementById('nav-profile').className = "flex flex-col items-center space-y-1 text-slate-500 hover:text-slate-300";
+
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            document.getElementById(`nav-${tabName}`).className = "flex flex-col items-center space-y-1 text-amber-400";
+        }
+
+        function openInstallModal() {
+            document.getElementById('installModal').classList.remove('hidden');
+        }
+
+        function closeInstallModal() {
+            document.getElementById('installModal').classList.add('hidden');
+        }
+
+        function resetApp() {
+            if (confirm("¿Seguro que deseas reiniciar todo tu progreso e historial?")) {
+                localStorage.removeItem('classica_daily_state');
+                appState = { currentIndex: 0, ratings: [], selectedRating: 3, selectedComplexity: 'Equilibrada' };
+                updateDailyView();
+                renderTimeline();
+                updateProfileView();
+                alert("Progreso reiniciado.");
+            }
+        }
+    </script>
+</body>
+</html>
